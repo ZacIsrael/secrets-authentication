@@ -27,33 +27,51 @@ app.get("/noAuth", async (req, res) => {
     const response = await axios.get(`${API_URL}random`);
     //The data you get back should be sent to the ejs file as "content"
     const result = response.data;
-    console.log('/noAuth: result = ', result)
-    let resString = JSON.stringify(result);
+    console.log("/noAuth: result = ", result);
     //Hint: make sure you use JSON.stringify to turn the JS object from axios into a string.
-    res.render('index', {
-      content : resString
+    let resString = JSON.stringify(result);
+    res.render("index", {
+      content: resString,
     });
   } catch (error) {
     console.log("Error: ", error.message);
     res.render("index", {
-      error: error.message,
+      content: error.message,
     });
   }
 });
 
-app.get("/basicAuth", (req, res) => {
-  //TODO 3: Write your code here to hit up the /all endpoint
-  //Specify that you only want the secrets from page 2
-  //HINT: This is how you can use axios to do basic auth:
-  // https://stackoverflow.com/a/74632908
-  /*
-   axios.get(URL, {
+app.get("/basicAuth", async (req, res) => {
+  try {
+    //TODO 3: Write your code here to hit up the /all endpoint
+    //Specify that you only want the secrets from page 2
+    const response = await axios.get(`${API_URL}all`, {
+      // authenticate the user
       auth: {
-        username: "abc",
-        password: "123",
+        username: yourUsername,
+        password: yourPassword,
+      },
+      // query parameters
+      params: {
+        // only retrieve secrets from page 2
+        page: 2,
       },
     });
-  */
+
+    const result = response.data;
+    console.log("/basicAuth: result = ", result);
+    // stringify the result
+    let resString = JSON.stringify(result);
+    // send the string of the secrets from page 2 to the EJS file
+    res.render("index", {
+      content: resString,
+    });
+  } catch (error) {
+    console.log("Error: ", error.message);
+    res.render("index", {
+      content: error.message,
+    });
+  }
 });
 
 app.get("/apiKey", (req, res) => {
