@@ -5,20 +5,40 @@ const app = express();
 const port = 3000;
 const API_URL = "https://secrets-api.appbrewery.com/";
 
+// Set EJS as the templating engine
+app.set("view engine", "ejs");
+
 //TODO 1: Fill in your values for the 3 types of auth.
-const yourUsername = "";
-const yourPassword = "";
-const yourAPIKey = "";
-const yourBearerToken = "";
+// In a real application, these values would NEVER be in a code
+// document lol. This is just practice though so I do not care about
+// them being leaked here.
+const yourUsername = "testuser1804";
+const yourPassword = "iLoveToCode123!";
+const yourAPIKey = "66a62f37-7d0c-4904-a1f6-1d50864a8a0c";
+const yourBearerToken = "Bearer ce7ef750-bda7-43e6-971c-90cef4696865";
 
 app.get("/", (req, res) => {
   res.render("index.ejs", { content: "API Response." });
 });
 
-app.get("/noAuth", (req, res) => {
-  //TODO 2: Use axios to hit up the /random endpoint
-  //The data you get back should be sent to the ejs file as "content"
-  //Hint: make sure you use JSON.stringify to turn the JS object from axios into a string.
+app.get("/noAuth", async (req, res) => {
+  try {
+    //TODO 2: Use axios to hit up the /random endpoint
+    const response = await axios.get(`${API_URL}random`);
+    //The data you get back should be sent to the ejs file as "content"
+    const result = response.data;
+    console.log('/noAuth: result = ', result)
+    let resString = JSON.stringify(result);
+    //Hint: make sure you use JSON.stringify to turn the JS object from axios into a string.
+    res.render('index', {
+      content : resString
+    });
+  } catch (error) {
+    console.log("Error: ", error.message);
+    res.render("index", {
+      error: error.message,
+    });
+  }
 });
 
 app.get("/basicAuth", (req, res) => {
