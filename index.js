@@ -91,7 +91,7 @@ app.get("/apiKey", async (req, res) => {
     console.log("/apiKey: result = ", result);
     // stringify the result
     let resString = JSON.stringify(result);
-    // send the string of the secrets from page 2 to the EJS file
+    // send the string of the secrets with a minimum embarassment score of 5 to the EJS file
     res.render("index", {
       content: resString,
     });
@@ -103,18 +103,31 @@ app.get("/apiKey", async (req, res) => {
   }
 });
 
-app.get("/bearerToken", (req, res) => {
-  //TODO 5: Write your code here to hit up the /secrets/{id} endpoint
-  //and get the secret with id of 42
-  //HINT: This is how you can use axios to do bearer token auth:
-  // https://stackoverflow.com/a/52645402
-  /*
-  axios.get(URL, {
-    headers: { 
-      Authorization: `Bearer <YOUR TOKEN HERE>` 
-    },
-  });
-  */
+app.get("/bearerToken", async (req, res) => {
+  try {
+    //TODO 5: Write your code here to hit up the /secrets/{id} endpoint
+    //and get the secret with id of 42
+    const response = await axios.get(`${API_URL}secrets/42`, {
+      // bearer token authetication (in the header)
+      headers: {
+        Authorization: yourBearerToken,
+      }
+    });
+    
+    const result = response.data;
+    console.log("/bearerToken: result = ", result);
+    // stringify the result
+    let resString = JSON.stringify(result);
+    // send the string of the secrets with ID = 42 to the EJS file
+    res.render("index", {
+      content: resString,
+    });
+  } catch (error) {
+    console.log("Error: ", error.message);
+    res.render("index", {
+      content: error.message,
+    });
+  }
 });
 
 app.listen(port, () => {
